@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Predictor</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #05070d;
+    --panel: rgba(15, 19, 31, .78);
+    --panel-light: rgba(255,255,255,.045);
+    --border: rgba(255,255,255,.09);
+    --text: #f5f7ff;
+    --muted: #8b93a7;
+    --purple: #8b5cf6;
+    --cyan: #06b6d4;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(139,92,246,.17), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(6,182,212,.13), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(139,92,246,.09), transparent 40%),
+        var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .14;
+    background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+.glow {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: .12;
+    pointer-events: none;
+}
+
+.glow.one {
+    background: var(--purple);
+    top: -250px;
+    left: -150px;
+}
+
+.glow.two {
+    background: var(--cyan);
+    right: -200px;
+    top: 40%;
+}
+
+/* NAV */
+
+nav {
+    width: min(1180px, calc(100% - 40px));
+    margin: auto;
+    padding: 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 850;
+    letter-spacing: .1em;
+}
+
+.logo-icon {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    box-shadow: 0 0 30px rgba(139,92,246,.2);
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #8d96aa;
+    font-size: 11px;
+    letter-spacing: .12em;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 13px #22c55e;
+}
+
+/* MAIN */
+
+main {
+    width: min(980px, calc(100% - 40px));
+    margin: auto;
+    padding: 65px 0 100px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 43px;
+}
+
+.badge {
+    display: inline-flex;
+    padding: 7px 13px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.035);
+    border-radius: 999px;
+    color: #a8b0c2;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 21px;
+}
+
+h1 {
+    font-size: clamp(45px, 8vw, 82px);
+    line-height: .95;
+    letter-spacing: -.06em;
+    font-weight: 900;
+    background: linear-gradient(120deg, #fff, #bdc5d8 50%, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+/* PREDICTOR */
+
+.predictor {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 28px;
+    backdrop-filter: blur(25px);
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 15px;
+    align-items: end;
+}
+
+.control-box {
+    padding: 17px;
+    border-radius: 17px;
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+}
+
+.control-label {
+    color: #7f889c;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    margin-bottom: 10px;
+}
+
+.year-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--purple);
+    cursor: pointer;
+}
+
+.year-display {
+    min-width: 78px;
+    text-align: right;
+    font-size: 25px;
+    font-weight: 850;
+}
+
+.age {
+    margin-top: 8px;
+    color: #8d96a9;
+    font-size: 12px;
+}
+
+.predict-btn {
+    height: 75px;
+    padding: 0 30px;
+    border: none;
+    border-radius: 18px;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 850;
+    letter-spacing: .05em;
+    cursor: pointer;
+    background: linear-gradient(135deg, #8b5cf6, #6d4bd9);
+    box-shadow:
+        0 15px 35px rgba(139,92,246,.28),
+        inset 0 1px rgba(255,255,255,.2);
+    transition: .25s;
+}
+
+.predict-btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 20px 45px rgba(139,92,246,.4),
+        inset 0 1px rgba(255,255,255,.2);
+}
+
+.predict-btn:active {
+    transform: scale(.98);
+}
+
+.system-info {
+    display: flex;
+    justify-content: space-between;
+    color: #697286;
+    font-size: 10px;
+    margin-top: 17px;
+}
+
+/* PEOPLE */
+
+.people {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 24px;
+}
+
+.person-pill {
+    padding: 7px 10px;
+    border-radius: 8px;
+    color: #646d80;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.045);
+    font-size: 10px;
+}
+
+/* RESULT */
+
+.result {
+    display: none;
+    margin-top: 22px;
+}
+
+.result.show {
+    display: block;
+    animation: resultIn .55s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes resultIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.result-card {
+    position: relative;
+    overflow: hidden;
+    padding: 35px;
+    border-radius: 28px;
+    border: 1px solid rgba(139,92,246,.25);
+    background:
+        radial-gradient(circle at 90% 0%, rgba(139,92,246,.13), transparent 30%),
+        rgba(13,16,27,.84);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 30px 80px rgba(0,0,0,.3);
+}
+
+.result-card::before {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    right: -100px;
+    bottom: -130px;
+    background: var(--purple);
+    opacity: .08;
+    filter: blur(70px);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.result-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 27px;
+}
+
+.discovered {
+    color: #a78bfa;
+    font-size: 10px;
+    letter-spacing: .18em;
+    font-weight: 850;
+}
+
+.future-id {
+    color: #535c70;
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.person {
+    font-size: clamp(42px, 8vw, 75px);
+    font-weight: 900;
+    letter-spacing: -.06em;
+    line-height: 1;
+}
+
+.future-label {
+    margin-top: 11px;
+    color: #7e879b;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+}
+
+.future-text {
+    margin-top: 30px;
+    max-width: 820px;
+    font-size: clamp(22px, 4vw, 36px);
+    line-height: 1.18;
+    letter-spacing: -.025em;
+    font-weight: 650;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 27px;
+}
+
+.meta-pill {
+    padding: 8px 11px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.035);
+    color: #929bad;
+    font-size: 11px;
+}
+
+.meta-pill.level {
+    color: #c4b5fd;
+}
+
+/* TIMELINE */
+
+.timeline {
+    margin-top: 35px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+}
+
+.timeline-title {
+    color: #687286;
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    margin-bottom: 19px;
+}
+
+.timeline-line {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.timeline-item {
+    padding: 13px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+}
+
+.timeline-year {
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 850;
+}
+
+.timeline-desc {
+    margin-top: 7px;
+    color: #747e92;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+/* BUTTON */
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.new-btn {
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color: #c8cedb;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.new-btn:hover {
+    background: rgba(255,255,255,.08);
+    transform: translateY(-2px);
+}
+
+/* SCAN */
+
+.scan {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.scan.active {
+    display: block;
+}
+
+.scan-ring {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(139,92,246,.2);
+    border-top-color: var(--purple);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.scan-text {
+    color: #9c8de8;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: .12em;
+}
+
+.scan-sub {
+    margin-top: 9px;
+    color: #555f74;
+    font-size: 11px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    main {
+        padding-top: 45px;
+    }
+
+    .controls {
+        grid-template-columns: 1fr;
+    }
+
+    .predict-btn {
+        width: 100%;
+    }
+
+    .result-card {
+        padding: 25px;
+    }
+
+    .timeline-line {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .result-top {
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    nav {
+        width: calc(100% - 25px);
+    }
+
+    main {
+        width: calc(100% - 25px);
+    }
+
+    .predictor {
+        padding: 17px;
+    }
+
+    .timeline-line {
+        grid-template-columns: 1fr;
+    }
+
+    .year-display {
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<nav>
+    <div class="logo">
+        <div class="logo-icon">✦</div>
+        FUTURE PREDICTOR
+    </div>
+
+    <div class="status">
+        <span class="status-dot"></span>
+        SYSTEM ONLINE
+    </div>
+</nav>
+
+
+<main>
+
+<section class="hero">
+
+    <div class="badge">
+        CLASS INTELLIGENCE · FUTURE ENGINE
+    </div>
+
+    <h1>Was wird aus euch?</h1>
+
+    <p>
+        Wähle ein Jahr und entdecke eine mögliche Zukunft.
+    </p>
+
+</section>
+
+
+<section class="predictor">
+
+    <div class="controls">
+
+        <div class="control-box">
+
+            <div class="control-label">
+                BIS WANN SOLL GESCHAUT WERDEN?
+            </div>
+
+            <div class="year-row">
+
+                <input
+                    id="yearSlider"
+                    type="range"
+                    min="2027"
+                    max="2099"
+                    value="2035"
+                >
+
+                <div
+                    class="year-display"
+                    id="yearDisplay"
+                >
+                    2035
+                </div>
+
+            </div>
+
+            <div
+                class="age"
+                id="ageDisplay"
+            >
+                Alter: 24 Jahre
+            </div>
+
+        </div>
+
+
+        <button
+            class="predict-btn"
+            onclick="predict()"
+        >
+            ZUKUNFT BERECHNEN
+        </button>
+
+    </div>
+
+
+    <div class="system-info">
+        <span>11 PERSONEN IM SYSTEM</span>
+        <span>2027 — 2099</span>
+    </div>
+
+
+    <div
+        class="people"
+        id="people"
+    ></div>
+
+</section>
+
+
+<div
+    class="result"
+    id="result"
+>
+
+    <div class="result-card">
+
+        <div
+            class="scan"
+            id="scan"
+        >
+
+            <div class="scan-ring"></div>
+
+            <div
+                class="scan-text"
+                id="scanText"
+            >
+                ANALYZING PERSON...
+            </div>
+
+            <div class="scan-sub">
+                Future Engine wird gestartet
+            </div>
+
+        </div>
+
+
+        <div
+            id="resultContent"
+            style="display:none;"
+        >
+
+            <div class="result-top">
+
+                <div class="discovered">
+                    ZUKUNFT ENTDECKT
+                </div>
+
+                <div
+                    class="future-id"
+                    id="futureId"
+                >
+                    #FP-0000
+                </div>
+
+            </div>
+
+
+            <div
+                class="person"
+                id="resultName"
+            >
+                Florian
+            </div>
+
+
+            <div class="future-label">
+                SEINE ZUKUNFT
+            </div>
+
+
+            <div
+                class="future-text"
+                id="resultText"
+            >
+                ...
+            </div>
+
+
+            <div class="meta">
+
+                <div
+                    class="meta-pill"
+                    id="yearMeta"
+                >
+                    2035
+                </div>
+
+                <div
+                    class="meta-pill"
+                    id="ageMeta"
+                >
+                    Alter 24
+                </div>
+
+                <div
+                    class="meta-pill level"
+                    id="levelMeta"
+                >
+                    LEVEL: SELTEN
+                </div>
+
+            </div>
+
+
+            <div class="timeline">
+
+                <div class="timeline-title">
+                    ZEITLINIE DER SIMULATION
+                </div>
+
+                <div
+                    class="timeline-line"
+                    id="timeline"
+                ></div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="new-btn"
+                    onclick="predict()"
+                >
+                    ↻ Neue Zukunft
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   PERSONEN
+===================================================== */
+
+const people = [
+    "Alp",
+    "Bilal",
+    "Florian",
+    "Milot",
+    "Ali",
+    "Samuel",
+    "Platon",
+    "Luis",
+    "Sascha",
+    "Daniel",
+    "Bogdan"
+];
+
+
+/* =====================================================
+   ZUKUNFTEN
+===================================================== */
+
+const futures = {
+
+Alp: {
+
+young: [
+"Alp konzentriert sich erstmal auf die Schule, hat aber bereits fünf verschiedene Pläne für seine Zukunft.",
+"Alp startet einen Nebenjob und merkt schnell, dass Geld verdienen eigentlich ganz interessant ist.",
+"Alp macht seinen Führerschein und fühlt sich danach direkt wie ein Geschäftsmann.",
+"Alp startet ein kleines Projekt mit Freunden und nimmt es plötzlich viel zu ernst.",
+"Alp entdeckt eine neue Leidenschaft und will daraus irgendwann seinen Beruf machen.",
+"Alp verdient sein erstes eigenes Geld und überlegt bereits, wie er es vermehren kann.",
+"Alp beginnt eine Ausbildung und erzählt jedem, dass er später sowieso sein eigenes Unternehmen gründet.",
+"Alp startet ein kleines Online-Projekt, das überraschend viele Leute sehen.",
+"Alp probiert verschiedene Jobs aus und findet heraus, dass er erstaunlich viele davon irgendwie kann.",
+"Alp entwickelt seine erste große Geschäftsidee.",
+"Alp wird langsam unabhängiger und stellt fest, dass Erwachsenwerden ziemlich viele Rechnungen beinhaltet.",
+"Alp beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Alp gründet mit Freunden ein kleines Projekt.",
+"Alp hat noch keinen genauen Plan, aber schon genug Ideen für zehn.",
+"Alp sagt: „Ich mach irgendwann mein eigenes Ding.“ Niemand weiß wann, aber er meint es ernst."
+],
+
+adult: [
+"Alp beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Alp bekommt seinen ersten richtigen Job und denkt bereits über die nächste Stufe nach.",
+"Alp gründet nebenbei ein kleines Unternehmen.",
+"Alp baut ein Projekt auf, das plötzlich größer wird als geplant.",
+"Alp übernimmt immer mehr Verantwortung und wird langsam zum Chef.",
+"Alp macht aus einer alten Idee ein echtes Unternehmen.",
+"Alp startet ein eigenes Geschäft und stellt bald den ersten Mitarbeiter ein.",
+"Alp wird für seine Geschäftsideen bekannt.",
+"Alp verdient inzwischen ordentlich und investiert direkt wieder in neue Ideen.",
+"Alp eröffnet sein erstes eigenes Büro.",
+"Alp gründet ein Unternehmen und nennt es einfach ALP.",
+"Alp wird Unternehmer und hat plötzlich mehr Meetings als Freizeit.",
+"Alp baut ein kleines Imperium auf, obwohl alles mit einer einzigen Idee angefangen hat.",
+"Alp bekommt seinen ersten großen Geschäftserfolg.",
+"Alp stellt fest, dass sein Plan von früher tatsächlich funktioniert hat."
+],
+
+future: [
+"Alp besitzt inzwischen mehrere Unternehmen und fragt sich, welches davon er eigentlich zuerst gegründet hat.",
+"Alp ist erfolgreicher Unternehmer und hat mehr Geschäftsideen als freie Tage.",
+"Alp eröffnet ein riesiges Büro und braucht trotzdem noch einen zweiten Schreibtisch für seine Ideen.",
+"Alp investiert inzwischen in neue Unternehmen und nennt das einfach „ein bisschen ausprobieren“.",
+"Alp wird für seine Geschäftsideen bekannt und hält Vorträge darüber, wie alles angefangen hat.",
+"Alp besitzt mehrere Projekte und startet trotzdem jedes Jahr etwas Neues.",
+"Alp wird eines Tages gefragt, wie er so erfolgreich wurde. Seine Antwort: „Keine Ahnung, hat einfach funktioniert.“",
+"Alp hat inzwischen ein großes Unternehmen aufgebaut und erinnert sich noch an seinen ersten Nebenjob.",
+"Alp arbeitet kaum noch selbst, kontrolliert aber trotzdem alles.",
+"Alp wird Unternehmerlegende und bekommt sogar eine Statue vor seinem Firmengebäude.",
+"Alp besitzt inzwischen ein Unternehmen, dessen Gebäude größer ist als seine alte Schule.",
+"Alp investiert in Start-ups und sucht ständig nach der nächsten verrückten Idee.",
+"Alp hat so viele Projekte, dass er eine Excel-Tabelle nur für seine Excel-Tabellen braucht.",
+"Alp blickt auf Jahrzehnte voller Projekte zurück und gründet trotzdem noch eine neue Firma.",
+"Alp wird irgendwann so erfolgreich, dass sein alter Klassenchat über seine Karriere diskutiert."
+]
+},
+
+
+Bilal: {
+
+young: [
+"Bilal konzentriert sich erstmal auf Schule und seine nächsten großen Pläne.",
+"Bilal startet einen Nebenjob und findet schnell heraus, dass Geld verdienen gar nicht schlecht ist.",
+"Bilal probiert verschiedene Jobs aus und sammelt erste Erfahrungen.",
+"Bilal entwickelt eine Geschäftsidee und erklärt seinen Freunden schon den kompletten Plan.",
+"Bilal startet ein kleines Projekt mit Freunden.",
+"Bilal macht seinen Führerschein und erklärt danach jedem, wie man richtig fährt.",
+"Bilal entdeckt seine Stärke im Umgang mit Menschen.",
+"Bilal beginnt sich ernsthaft mit seiner beruflichen Zukunft zu beschäftigen.",
+"Bilal verdient sein erstes eigenes Geld und hat direkt eine Idee dafür.",
+"Bilal startet ein Online-Projekt.",
+"Bilal probiert verschiedene Bereiche aus.",
+"Bilal entwickelt einen ziemlich ambitionierten Zukunftsplan.",
+"Bilal beginnt eine Ausbildung oder ein Studium.",
+"Bilal sammelt erste Arbeitserfahrungen.",
+"Bilal sagt: „Bruder, ich hab einen Plan.“ Niemand weiß welchen."
+],
+
+adult: [
+"Bilal beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Bilal bekommt seinen ersten richtigen Job und übernimmt direkt Verantwortung.",
+"Bilal entdeckt seine besondere Leidenschaft für Tiere und bewirbt sich spontan im Zoo.",
+"Bilal arbeitet plötzlich im Zoo und kennt nach kurzer Zeit jedes Tier beim Namen.",
+"Bilal wird im Zoo bekannt, weil er mit jedem Tier besser klarkommt als mit Menschen.",
+"Bilal bekommt seinen eigenen Bereich im Zoo und nennt ihn einfach „Bilal's Kingdom“.",
+"Bilal arbeitet mit Tieren und erzählt jedem Besucher Geschichten über die Tiere.",
+"Bilal wird zum inoffiziellen Lieblingsmitarbeiter des Zoos.",
+"Bilal übernimmt immer mehr Verantwortung und kümmert sich irgendwann um einen ganzen Tierbereich.",
+"Bilal erklärt Besuchern jeden Tag: „Bruder, der Löwe ist heute nicht gut drauf.“",
+"Bilal bekommt eine eigene Führung durch den Zoo.",
+"Bilal wird für seine Arbeit mit Tieren bekannt.",
+"Bilal eröffnet nebenbei einen kleinen Online-Kanal über Zoo und Tiere.",
+"Bilal arbeitet weiterhin im Zoo und behauptet, dass es eigentlich nur ein Nebenjob war.",
+"Bilal hat inzwischen mehr Tiergeschichten als normale Geschichten."
+],
+
+future: [
+"Bilal arbeitet immer noch im Zoo und kennt inzwischen fast jedes Tier persönlich.",
+"Bilal ist inzwischen Leiter eines großen Tierbereichs und wird von den Tieren wahrscheinlich besser respektiert als von seinen Mitarbeitern.",
+"Bilal bekommt seinen eigenen Bereich im Zoo und nennt ihn offiziell „Bilal's Kingdom“.",
+"Bilal wird zum Zoo-Experten und wird regelmäßig für Interviews eingeladen.",
+"Bilal hat eine eigene Tier-Show und beginnt jede Folge mit: „Bruder, heute wird wild.“",
+"Bilal arbeitet mit exotischen Tieren und erzählt jedem, dass er schon immer wusste, dass er im Zoo landet.",
+"Bilal wird für seine Arbeit mit Tieren bekannt und schreibt irgendwann ein Buch darüber.",
+"Bilal eröffnet einen riesigen Tierpark und stellt seine Freunde als Mitarbeiter ein.",
+"Bilal wird Zoo-Direktor und führt Meetings mit dem Satz: „Bruder, wir müssen mehr Tiere holen.“",
+"Bilal besitzt inzwischen einen Tierpark und kennt jedes Tier mit Namen.",
+"Bilal bekommt einen Preis für seine Arbeit mit Tieren.",
+"Bilal wird im Internet bekannt, weil ein Video von ihm mit einem Tier viral geht.",
+"Bilal arbeitet weiterhin mit Tieren und behauptet, dass das alles komplett ungeplant war.",
+"Bilal wird irgendwann so bekannt, dass Schulklassen wegen ihm in den Zoo kommen.",
+"Bilal hat seinen Lebenstraum erreicht: ein riesiger Zoo, viele Tiere und immer etwas zu tun."
+]
+},
+
+
+Florian: {
+
+young: [
+"Florian entdeckt seine Leidenschaft für Technik und verbringt mehr Zeit am Computer als geplant.",
+"Florian programmiert sein erstes Projekt.",
+"Florian baut seinen eigenen kleinen Server.",
+"Florian probiert Linux aus und beginnt sofort alles zu optimieren.",
+"Florian erstellt seine erste Website.",
+"Florian lernt Programmieren und verbringt drei Stunden damit, einen Fehler zu finden, der aus einer einzigen Klammer besteht.",
+"Florian entwickelt eine App, die eigentlich nur ein Test sein sollte.",
+"Florian baut einen PC und optimiert ihn direkt wieder.",
+"Florian startet ein kleines Technikprojekt mit Freunden.",
+"Florian entdeckt, dass er überraschend viel Spaß an Programmieren hat.",
+"Florian lernt eine neue Programmiersprache.",
+"Florian bekommt seinen ersten kleinen Auftrag für Technik.",
+"Florian baut etwas, das niemand verlangt hat, aber trotzdem funktioniert.",
+"Florian erstellt eine Website und nennt die Datei zuerst test.html.",
+"Florian hat bereits mehr technische Projekte als normale Hobbys."
+],
+
+adult: [
+"Florian studiert Informatik oder startet eine technische Ausbildung.",
+"Florian arbeitet als Entwickler und verbringt seine Tage mit Code.",
+"Florian gründet ein Tech-Start-up.",
+"Florian entwickelt eine App, die überraschend viele Nutzer bekommt.",
+"Florian baut einen eigenen Serverraum.",
+"Florian startet ein Softwareprojekt, das plötzlich richtig erfolgreich wird.",
+"Florian entwickelt eine KI und verbringt anschließend drei Tage damit, sie zu optimieren.",
+"Florian bekommt seinen ersten großen Entwicklerjob.",
+"Florian baut nebenbei eine Softwarefirma auf.",
+"Florian entwickelt ein Tool, das andere Unternehmen benutzen.",
+"Florian arbeitet an einem eigenen Betriebssystem.",
+"Florian bekommt ein eigenes Büro und richtet zuerst einen riesigen PC ein.",
+"Florian wird für seine technischen Fähigkeiten bekannt.",
+"Florian programmiert irgendwann mehr als er schläft.",
+"Florian eröffnet schließlich seinen ersten eigenen Dönerladen und programmiert die Kasse selbst."
+],
+
+future: [
+"Florian hat inzwischen eine erfolgreiche Softwarefirma gegründet und besitzt zusätzlich einen Dönerladen.",
+"Florian eröffnet seinen eigenen Dönerladen und nennt ihn „Döner.exe“.",
+"Florian besitzt eine Dönerladen-Kette und die Bestellungen laufen komplett über seine selbst programmierte Software.",
+"Florian gründet einen Dönerladen, bei dem Roboter die Bestellungen aufnehmen.",
+"Florian wird Softwareentwickler und Dönerladenbesitzer gleichzeitig. Niemand weiß, wie das passiert ist.",
+"Florian eröffnet seinen ersten Dönerladen und baut das Kassensystem natürlich selbst.",
+"Florian entwickelt eine App für seinen Dönerladen und plötzlich bestellen 100.000 Menschen darüber.",
+"Florian besitzt inzwischen mehrere Dönerläden und einen Serverraum im Keller.",
+"Florian macht aus seinem Dönerladen ein Tech-Unternehmen mit Dönern als Nebenprodukt.",
+"Florian eröffnet einen Dönerladen mit einem vollständig automatisierten Bestellsystem.",
+"Florian wird bekannt für den technisch fortschrittlichsten Dönerladen der Welt.",
+"Florian programmiert eine KI, die entscheidet, wie viel Soße auf jeden Döner kommt.",
+"Florian besitzt eine Dönerladen-Kette und sagt immer noch: „Ich wollte eigentlich nur programmieren.“",
+"Florian wird reich mit Technologie und Dönern und findet trotzdem jeden Fehler im Kassensystem.",
+"Florian hat am Ende zwei große Leidenschaften: Code und Döner."
+]
+},
+
+
+Milot: {
+
+young: [
+"Milot konzentriert sich erstmal auf Schule und seine nächsten Ziele.",
+"Milot startet einen Nebenjob und sammelt erste Erfahrungen.",
+"Milot entdeckt ein neues Hobby und wird darin überraschend gut.",
+"Milot startet ein Projekt mit Freunden.",
+"Milot macht seinen Führerschein.",
+"Milot verdient sein erstes eigenes Geld.",
+"Milot entwickelt eine eigene Idee.",
+"Milot probiert verschiedene Bereiche aus.",
+"Milot beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Milot startet ein Online-Projekt.",
+"Milot nimmt an einem Wettbewerb teil.",
+"Milot entdeckt eine neue Leidenschaft.",
+"Milot entwickelt einen ziemlich ambitionierten Zukunftsplan.",
+"Milot sammelt erste Erfahrungen im Arbeitsleben.",
+"Milot hat bereits mehr Pläne als freie Zeit."
+],
+
+adult: [
+"Milot beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Milot bekommt einen guten Job und übernimmt schnell Verantwortung.",
+"Milot gründet ein kleines Unternehmen.",
+"Milot macht aus einem Hobby einen Beruf.",
+"Milot startet einen erfolgreichen Kanal.",
+"Milot gewinnt einen Wettbewerb.",
+"Milot entwickelt ein eigenes Produkt.",
+"Milot bekommt sein erstes eigenes Team.",
+"Milot baut ein Start-up auf.",
+"Milot wird in seinem Bereich immer bekannter.",
+"Milot bekommt eine große berufliche Chance.",
+"Milot macht aus einer spontanen Idee ein echtes Projekt.",
+"Milot baut sich Schritt für Schritt eine erfolgreiche Karriere auf.",
+"Milot startet mehrere Projekte gleichzeitig.",
+"Milot merkt, dass seine alten Ideen tatsächlich funktionieren."
+],
+
+future: [
+"Milot führt inzwischen ein erfolgreiches Unternehmen.",
+"Milot besitzt mehrere Projekte und startet trotzdem ständig neue.",
+"Milot wird für seine Ideen bekannt.",
+"Milot hat ein großes Team aufgebaut.",
+"Milot investiert inzwischen in neue Projekte.",
+"Milot arbeitet an internationalen Projekten.",
+"Milot unterstützt junge Unternehmer.",
+"Milot wird regelmäßig nach seinen Erfahrungen gefragt.",
+"Milot hat mehrere erfolgreiche Unternehmen aufgebaut.",
+"Milot besitzt inzwischen ein großes Netzwerk.",
+"Milot startet immer noch neue Projekte.",
+"Milot blickt auf Jahrzehnte voller Erfolge zurück.",
+"Milot ist inzwischen jemand, den andere um Rat fragen.",
+"Milot hat seine Leidenschaft zu einer Karriere gemacht.",
+"Milot ist erfolgreich geworden und behauptet immer noch: „War doch einfach.“"
+]
+},
+
+
+Ali: {
+
+young: [
+"Ali konzentriert sich erstmal auf Schule und seine nächsten großen Schritte.",
+"Ali startet einen Nebenjob.",
+"Ali entwickelt seine erste Geschäftsidee.",
+"Ali startet ein Projekt mit Freunden.",
+"Ali entdeckt eine neue Leidenschaft.",
+"Ali macht seinen Führerschein.",
+"Ali verdient sein erstes eigenes Geld.",
+"Ali probiert verschiedene Jobs aus.",
+"Ali startet ein kleines Online-Projekt.",
+"Ali beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Ali entwickelt einen ziemlich ambitionierten Plan.",
+"Ali sammelt erste Arbeitserfahrungen.",
+"Ali baut etwas Kleines, das überraschend gut funktioniert.",
+"Ali entdeckt, dass er ziemlich gut darin ist, Dinge einfach anzufangen.",
+"Ali sagt: „Ich mach irgendwann mein eigenes Ding.“"
+],
+
+adult: [
+"Ali beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Ali bekommt seinen ersten richtigen Job.",
+"Ali gründet ein kleines Unternehmen.",
+"Ali entwickelt eine eigene App.",
+"Ali startet einen erfolgreichen Online-Kanal.",
+"Ali baut ein eigenes Projekt auf.",
+"Ali bekommt sein erstes eigenes Team.",
+"Ali entwickelt ein Produkt mit ersten Kunden.",
+"Ali gründet mit Freunden ein Start-up.",
+"Ali bekommt eine große berufliche Chance.",
+"Ali macht aus einem Hobby einen Beruf.",
+"Ali übernimmt immer mehr Verantwortung.",
+"Ali baut sich langsam ein Unternehmen auf.",
+"Ali wird für eine seiner Ideen bekannt.",
+"Ali eröffnet schließlich seinen eigenen Dönerladen, obwohl niemand damit gerechnet hat."
+],
+
+future: [
+"Ali besitzt inzwischen eine kleine Dönerladen-Kette und behauptet, alles habe mit einem einzigen Döner angefangen.",
+"Ali gründet seinen eigenen Dönerladen und nennt ihn „Ali's Döner Empire“.",
+"Ali eröffnet einen Dönerladen, der irgendwann zu einem der bekanntesten der Stadt wird.",
+"Ali besitzt mehrere Dönerläden und hat seinen eigenen geheimen Soßen-Rezeptcode.",
+"Ali wird erfolgreicher Unternehmer und verdient sein Geld inzwischen mit Dönern.",
+"Ali eröffnet einen riesigen Dönerladen mit eigener Gaming-Ecke.",
+"Ali gründet eine Dönerladen-Kette und stellt seine Freunde als erste Mitarbeiter ein.",
+"Ali baut einen Dönerladen, in dem man den Döner komplett selbst zusammenstellen kann.",
+"Ali eröffnet seinen ersten Laden und drei Jahre später stehen die Leute bis draußen an.",
+"Ali wird für seinen Döner bekannt und bekommt irgendwann eine eigene Dokumentation.",
+"Ali besitzt mehrere Restaurants und sein erstes Schild hängt immer noch im Büro.",
+"Ali entwickelt sogar eine App zum Vorbestellen seiner Döner.",
+"Ali wird Restaurantbesitzer und sagt: „Eigentlich wollte ich nur einen Laden ausprobieren.“",
+"Ali hat inzwischen ein echtes Döner-Imperium aufgebaut.",
+"Ali besitzt am Ende so viele Dönerläden, dass er selbst nicht mehr weiß, in welchem er heute arbeitet."
+]
+},
+
+
+Samuel: {
+
+young: [
+"Samuel konzentriert sich erstmal auf Schule und seine nächsten Ziele.",
+"Samuel startet einen Nebenjob.",
+"Samuel entwickelt eine eigene Idee.",
+"Samuel startet ein Projekt mit Freunden.",
+"Samuel macht seinen Führerschein.",
+"Samuel entdeckt ein neues Hobby.",
+"Samuel verdient sein erstes eigenes Geld.",
+"Samuel beginnt sich mit seiner Zukunft zu beschäftigen.",
+"Samuel startet ein Online-Projekt.",
+"Samuel probiert verschiedene Bereiche aus.",
+"Samuel sammelt erste Arbeitserfahrungen.",
+"Samuel entwickelt einen Zukunftsplan.",
+"Samuel entdeckt eine neue Leidenschaft.",
+"Samuel baut etwas Kleines, das überraschend gut funktioniert.",
+"Samuel hat bereits erstaunlich viele Ideen."
+],
+
+adult: [
+"Samuel beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Samuel bekommt einen guten Job.",
+"Samuel übernimmt schnell Verantwortung.",
+"Samuel gründet ein Unternehmen.",
+"Samuel entwickelt ein eigenes Projekt.",
+"Samuel bekommt sein erstes Team.",
+"Samuel startet einen erfolgreichen Kanal.",
+"Samuel bekommt eine große berufliche Chance.",
+"Samuel gründet ein Start-up.",
+"Samuel entwickelt ein Produkt.",
+"Samuel wird in seinem Bereich bekannt.",
+"Samuel baut ein eigenes Projekt auf.",
+"Samuel macht aus einem Hobby einen Beruf.",
+"Samuel übernimmt immer mehr Verantwortung.",
+"Samuel eröffnet schließlich einen eigenen Dönerladen und macht daraus direkt ein Konzept."
+],
+
+future: [
+"Samuel besitzt inzwischen mehrere Dönerläden und hält jeden Montag eine Besprechung über die perfekte Soße.",
+"Samuel gründet eine Dönerladen-Kette und nennt die erste Filiale einfach „Samuel's“.",
+"Samuel eröffnet einen riesigen Dönerladen mit eigener Terrasse und viel zu vielen Sitzplätzen.",
+"Samuel wird Restaurantbesitzer und kennt irgendwann jeden Stammkunden persönlich.",
+"Samuel besitzt mehrere Restaurants und macht aus seinem ersten Laden eine legendäre Geschichte.",
+"Samuel baut ein Döner-Imperium auf und veranstaltet jedes Jahr ein eigenes Döner-Festival.",
+"Samuel eröffnet einen Laden, der 24 Stunden geöffnet hat.",
+"Samuel wird bekannt für seine spezielle Döner-Kreation.",
+"Samuel besitzt mehrere Restaurants und sein erstes Rezept hängt noch immer an der Wand.",
+"Samuel entwickelt sogar eine eigene Döner-App.",
+"Samuel eröffnet einen Dönerladen und beschäftigt irgendwann ein riesiges Team.",
+"Samuel wird für sein Restaurantkonzept bekannt.",
+"Samuel hat so viele Dönerläden, dass sein Kalender nur noch aus Standortbesuchen besteht.",
+"Samuel wird Restaurantunternehmer und sagt bei jeder neuen Filiale: „Okay, hört kurz zu.“",
+"Samuel baut ein richtiges Döner-Imperium auf."
+]
+},
+
+
+Platon: {
+
+young: [
+"Platon beschäftigt sich erstmal intensiv mit Schule und stellt dabei erstaunlich viele Fragen.",
+"Platon entdeckt ein Thema, über das er sehr viel wissen möchte.",
+"Platon liest ein Buch und macht daraus direkt eine zweistündige Diskussion.",
+"Platon entwickelt eine eigene Theorie.",
+"Platon startet ein kleines Projekt.",
+"Platon beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Platon entdeckt seine Leidenschaft für ein bestimmtes Thema.",
+"Platon schreibt einen langen Text über eine eigentlich einfache Frage.",
+"Platon beginnt sich auf Ausbildung oder Studium vorzubereiten.",
+"Platon sammelt erste Arbeitserfahrungen.",
+"Platon entwickelt einen Zukunftsplan.",
+"Platon diskutiert mit Freunden über die Zukunft.",
+"Platon entdeckt ein neues Interessengebiet.",
+"Platon startet einen kleinen Online-Kanal.",
+"Platon hat bereits mehr Gedanken als sein Notizbuch Seiten."
+],
+
+adult: [
+"Platon beginnt ein Studium und liest freiwillig Bücher, die andere nur als Deko benutzen.",
+"Platon spezialisiert sich auf ein Thema.",
+"Platon schreibt seine erste größere Arbeit.",
+"Platon entwickelt eine eigene Theorie.",
+"Platon gründet ein Unternehmen und hält erstmal eine 45-minütige Präsentation.",
+"Platon veröffentlicht seinen ersten längeren Text.",
+"Platon arbeitet an einem Forschungsprojekt.",
+"Platon wird in seinem Fachbereich immer bekannter.",
+"Platon schreibt ein Buch.",
+"Platon entwickelt eine neue Idee und erklärt sie jedem ganz genau.",
+"Platon gründet ein Unternehmen.",
+"Platon übernimmt Verantwortung für ein Team.",
+"Platon wird für seine Ideen bekannt.",
+"Platon hält seinen ersten großen Vortrag.",
+"Platon diskutiert drei Stunden über den perfekten Firmennamen."
+],
+
+future: [
+"Platon hat inzwischen mehrere Bücher geschrieben und diskutiert immer noch darüber, was sein erstes Buch wirklich bedeutet.",
+"Platon ist Professor und seine Vorlesungen dauern grundsätzlich länger als geplant.",
+"Platon gründet eine Firma und die Präsentation über die Firma dauert länger als das Projekt selbst.",
+"Platon wird regelmäßig zu großen Vorträgen eingeladen.",
+"Platon entwickelt eine neue Theorie und veröffentlicht direkt ein 600-seitiges Buch dazu.",
+"Platon besitzt eine Bibliothek, die größer ist als manche Wohnungen.",
+"Platon wird für seine Ideen bekannt.",
+"Platon arbeitet an einem Forschungsprojekt, das angeblich nur zwei Jahre dauern sollte.",
+"Platon veröffentlicht weiterhin Bücher.",
+"Platon diskutiert immer noch gerne über die Bedeutung von allem.",
+"Platon gründet ein Unternehmen mit dem Namen, über den er drei Jahre nachgedacht hat.",
+"Platon wird ein gefragter Experte.",
+"Platon hält einen Vortrag und sagt danach: „Ich hätte das auch kürzer erklären können.“",
+"Platon blickt auf Jahrzehnte voller Ideen zurück.",
+"Platon schreibt ein Buch darüber, warum sein erstes Buch eigentlich missverstanden wurde."
+]
+},
+
+
+Luis: {
+
+young: [
+"Luis konzentriert sich erstmal auf Schule und seine nächsten großen Schritte.",
+"Luis startet einen Nebenjob.",
+"Luis entdeckt ein neues Hobby.",
+"Luis entwickelt eine eigene Idee.",
+"Luis startet ein Projekt mit Freunden.",
+"Luis macht seinen Führerschein.",
+"Luis verdient sein erstes eigenes Geld.",
+"Luis probiert verschiedene Jobs aus.",
+"Luis beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Luis startet ein Online-Projekt.",
+"Luis entdeckt eine neue Leidenschaft.",
+"Luis sammelt erste Arbeitserfahrungen.",
+"Luis entwickelt einen Zukunftsplan.",
+"Luis baut etwas Kleines, das überraschend gut funktioniert.",
+"Luis hat bereits einige große Ideen."
+],
+
+adult: [
+"Luis beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Luis bekommt einen guten Job.",
+"Luis startet ein eigenes Projekt.",
+"Luis entwickelt eine App.",
+"Luis gründet ein Start-up.",
+"Luis bekommt eine große berufliche Chance.",
+"Luis macht aus einem Hobby einen Beruf.",
+"Luis baut ein eigenes Team auf.",
+"Luis wird für ein Projekt bekannt.",
+"Luis entwickelt ein Produkt.",
+"Luis startet einen erfolgreichen Kanal.",
+"Luis gründet ein Unternehmen.",
+"Luis bekommt sein eigenes Büro.",
+"Luis arbeitet an mehreren Projekten.",
+"Luis macht aus einer kleinen Idee etwas Größeres."
+],
+
+future: [
+"Luis besitzt inzwischen mehrere Unternehmen und arbeitet trotzdem noch an eigenen Ideen.",
+"Luis wird für seine Projekte bekannt.",
+"Luis arbeitet international.",
+"Luis hat ein großes Team aufgebaut.",
+"Luis investiert inzwischen in neue Projekte.",
+"Luis besitzt mehrere erfolgreiche Unternehmen.",
+"Luis wird regelmäßig nach seinen Erfahrungen gefragt.",
+"Luis unterstützt junge Gründer.",
+"Luis arbeitet an großen internationalen Projekten.",
+"Luis hat eine lange erfolgreiche Karriere hinter sich.",
+"Luis startet weiterhin neue Projekte.",
+"Luis hat inzwischen ein großes Netzwerk.",
+"Luis blickt auf Jahrzehnte voller Ideen zurück.",
+"Luis arbeitet inzwischen deutlich entspannter als früher.",
+"Luis sagt immer noch: „Ich wollte eigentlich nur ausprobieren, ob es funktioniert.“"
+]
+},
+
+
+Sascha: {
+
+young: [
+"Sascha konzentriert sich erstmal auf Schule und seine Zukunft.",
+"Sascha startet einen Nebenjob.",
+"Sascha entdeckt ein neues Hobby.",
+"Sascha entwickelt eine eigene Idee.",
+"Sascha startet ein Projekt mit Freunden.",
+"Sascha macht seinen Führerschein.",
+"Sascha verdient sein erstes eigenes Geld.",
+"Sascha probiert verschiedene Jobs aus.",
+"Sascha beginnt sich ernsthaft mit seiner Zukunft zu beschäftigen.",
+"Sascha startet ein Online-Projekt.",
+"Sascha entdeckt eine neue Leidenschaft.",
+"Sascha sammelt erste Arbeitserfahrungen.",
+"Sascha entwickelt einen Zukunftsplan.",
+"Sascha baut etwas Kleines, das überraschend gut funktioniert.",
+"Sascha hat bereits ziemlich große Pläne."
+],
+
+adult: [
+"Sascha beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Sascha bekommt einen guten Job.",
+"Sascha gründet ein kleines Unternehmen.",
+"Sascha entwickelt ein eigenes Projekt.",
+"Sascha bekommt eine große berufliche Chance.",
+"Sascha übernimmt mehr Verantwortung.",
+"Sascha macht aus einem Hobby einen Beruf.",
+"Sascha startet einen erfolgreichen Kanal.",
+"Sascha gründet ein Start-up.",
+"Sascha entwickelt ein Produkt.",
+"Sascha baut ein eigenes Team auf.",
+"Sascha wird in seinem Bereich immer bekannter.",
+"Sascha bekommt sein eigenes Büro.",
+"Sascha arbeitet an mehreren Projekten.",
+"Sascha macht aus einer kleinen Idee etwas Großes."
+],
+
+future: [
+"Sascha eröffnet irgendwann einen Freizeitpark und nennt die größte Achterbahn einfach „Sascha Express“.",
+"Sascha besitzt einen riesigen Freizeitpark und testet jede neue Attraktion persönlich.",
+"Sascha wird Besitzer eines Freizeitparks und behauptet, das sei eigentlich nur ein Hobby gewesen.",
+"Sascha gründet ein Unternehmen für verrückte Freizeitpark-Attraktionen.",
+"Sascha baut einen Freizeitpark, in dem alles größer ist als nötig.",
+"Sascha besitzt mehrere Attraktionen und bekommt sogar eine eigene Achterbahn.",
+"Sascha wird für seinen Freizeitpark bekannt und eröffnet jedes Jahr eine neue Attraktion.",
+"Sascha baut eine Achterbahn, die angeblich zu schnell ist – und fährt trotzdem selbst damit.",
+"Sascha besitzt einen Freizeitpark und kennt irgendwann jede Attraktion persönlich.",
+"Sascha eröffnet eine riesige Indoor-Erlebniswelt.",
+"Sascha entwickelt eine neue Achterbahn und nennt sie einfach Sascha 2.0.",
+"Sascha baut einen Freizeitpark, der irgendwann zu einer Touristenattraktion wird.",
+"Sascha bekommt seinen eigenen Freizeitpark und hat plötzlich einen sehr interessanten Lebenslauf.",
+"Sascha wird Unternehmer und verdient sein Geld mit Achterbahnen.",
+"Sascha hat am Ende einen Freizeitpark, eine Achterbahn und wahrscheinlich immer noch zu viel Energie."
+]
+},
+
+
+Daniel: {
+
+young: [
+"Daniel konzentriert sich erstmal auf Schule und seine Zukunft.",
+"Daniel startet einen Nebenjob.",
+"Daniel entdeckt ein neues Hobby.",
+"Daniel entwickelt eine eigene Idee.",
+"Daniel startet ein Projekt mit Freunden.",
+"Daniel macht seinen Führerschein.",
+"Daniel verdient sein erstes eigenes Geld.",
+"Daniel sammelt erste Arbeitserfahrungen.",
+"Daniel beginnt sich mit seiner Zukunft zu beschäftigen.",
+"Daniel startet ein kleines Online-Projekt.",
+"Daniel entdeckt eine neue Leidenschaft.",
+"Daniel probiert verschiedene Berufe aus.",
+"Daniel entwickelt einen Zukunftsplan.",
+"Daniel baut etwas Kleines, das überraschend gut funktioniert.",
+"Daniel hat bereits ziemlich große Pläne."
+],
+
+adult: [
+"Daniel beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Daniel bekommt einen guten Job.",
+"Daniel gründet ein kleines Unternehmen.",
+"Daniel entwickelt ein eigenes Projekt.",
+"Daniel bekommt eine große berufliche Chance.",
+"Daniel übernimmt mehr Verantwortung.",
+"Daniel macht aus einem Hobby einen Beruf.",
+"Daniel startet ein Online-Projekt.",
+"Daniel gründet ein Start-up.",
+"Daniel entwickelt ein Produkt.",
+"Daniel baut ein eigenes Team auf.",
+"Daniel bekommt sein eigenes Büro.",
+"Daniel wird in seinem Bereich immer erfolgreicher.",
+"Daniel arbeitet an mehreren Projekten.",
+"Daniel macht aus einer kleinen Idee etwas Großes."
+],
+
+future: [
+"Daniel wird professioneller Wettermoderator und behauptet bei jedem Regen, er habe es vorher gewusst.",
+"Daniel arbeitet beim Wetterdienst und liegt erstaunlich oft richtig.",
+"Daniel bekommt seine eigene Wettershow.",
+"Daniel wird bekannt, weil seine Wettervorhersagen irgendwie immer stimmen.",
+"Daniel entwickelt eine eigene Wetter-App.",
+"Daniel wird zum Wetterexperten und erklärt jedem, warum morgen angeblich gutes Wetter kommt.",
+"Daniel bekommt seine eigene Wetterstation.",
+"Daniel arbeitet an einem Projekt, das Wetterdaten auf der ganzen Welt sammelt.",
+"Daniel wird im Fernsehen bekannt und steht plötzlich jeden Morgen vor einer Kamera.",
+"Daniel gründet ein Unternehmen für Wettertechnologie.",
+"Daniel besitzt eine Wetterstation und schaut trotzdem jeden Morgen aus dem Fenster.",
+"Daniel wird Wettermoderator und trägt selbst bei 30 Grad noch eine Jacke.",
+"Daniel bekommt seine eigene Wetter-App und nennt sie einfach Daniel Weather.",
+"Daniel wird für seine Wettervorhersagen bekannt.",
+"Daniel sagt irgendwann: „Ich hab doch gesagt, es regnet.“"
+]
+},
+
+
+Bogdan: {
+
+young: [
+"Bogdan konzentriert sich erstmal auf Schule und seine Zukunft.",
+"Bogdan startet einen Nebenjob.",
+"Bogdan entdeckt ein neues Hobby.",
+"Bogdan entwickelt eine eigene Idee.",
+"Bogdan startet ein Projekt mit Freunden.",
+"Bogdan macht seinen Führerschein.",
+"Bogdan verdient sein erstes eigenes Geld.",
+"Bogdan sammelt erste Arbeitserfahrungen.",
+"Bogdan beginnt sich mit seiner Zukunft zu beschäftigen.",
+"Bogdan startet ein kleines Online-Projekt.",
+"Bogdan entdeckt eine neue Leidenschaft.",
+"Bogdan probiert verschiedene Berufe aus.",
+"Bogdan entwickelt einen Zukunftsplan.",
+"Bogdan baut etwas Kleines, das überraschend gut funktioniert.",
+"Bogdan hat bereits ziemlich große Pläne."
+],
+
+adult: [
+"Bogdan beendet seine Ausbildung oder sein Studium und startet ins Berufsleben.",
+"Bogdan bekommt einen guten Job.",
+"Bogdan gründet ein kleines Unternehmen.",
+"Bogdan entwickelt ein eigenes Projekt.",
+"Bogdan bekommt eine große berufliche Chance.",
+"Bogdan übernimmt mehr Verantwortung.",
+"Bogdan macht aus einem Hobby einen Beruf.",
+"Bogdan startet ein erfolgreiches Online-Projekt.",
+"Bogdan gründet ein Start-up.",
+"Bogdan entwickelt ein Produkt.",
+"Bogdan baut ein eigenes Team auf.",
+"Bogdan bekommt sein eigenes Büro.",
+"Bogdan wird in seinem Bereich immer erfolgreicher.",
+"Bogdan arbeitet an mehreren Projekten.",
+"Bogdan macht aus einer kleinen Idee etwas Großes."
+],
+
+future: [
+"Bogdan wird professioneller Spieleentwickler und veröffentlicht irgendwann sein eigenes Spiel.",
+"Bogdan gründet ein Gaming-Studio und entwickelt ein Spiel, das plötzlich Millionen Menschen spielen.",
+"Bogdan wird bekannt für ein Spiel, das er ursprünglich nur aus Spaß programmiert hat.",
+"Bogdan besitzt ein eigenes Gaming-Studio.",
+"Bogdan entwickelt ein Spiel und vergisst dabei komplett, dass er eigentlich Feierabend machen wollte.",
+"Bogdan wird Game-Designer und arbeitet an großen Spielen.",
+"Bogdan gründet ein Studio und stellt seine Freunde als erstes Entwicklerteam ein.",
+"Bogdan entwickelt ein Spiel, das plötzlich überall gespielt wird.",
+"Bogdan bekommt sein eigenes Studio mit riesigem Gaming-Raum.",
+"Bogdan wird für seine Spiele ausgezeichnet.",
+"Bogdan entwickelt ein Spiel, das zehn Jahre später immer noch gespielt wird.",
+"Bogdan besitzt inzwischen mehrere Gaming-Projekte.",
+"Bogdan wird Unternehmer und verdient sein Geld mit Videospielen.",
+"Bogdan veröffentlicht sein größtes Spiel und sagt danach: „War eigentlich nur ein Test.“",
+"Bogdan hat am Ende ein eigenes Gaming-Studio und wahrscheinlich immer noch zu viele Ideen."
+]
+}
+
+};
+
+
+/* =====================================================
+   UI
+===================================================== */
+
+const peopleContainer = document.getElementById("people");
+
+people.forEach(person => {
+
+    const pill = document.createElement("div");
+
+    pill.className = "person-pill";
+    pill.textContent = person;
+
+    peopleContainer.appendChild(pill);
+
+});
+
+
+/* =====================================================
+   JAHR
+===================================================== */
+
+const slider = document.getElementById("yearSlider");
+const yearDisplay = document.getElementById("yearDisplay");
+const ageDisplay = document.getElementById("ageDisplay");
+
+function updateYear() {
+
+    const year = Number(slider.value);
+
+    const age = 15 + (year - 2026);
+
+    yearDisplay.textContent = year;
+    ageDisplay.textContent = `Alter: ${age} Jahre`;
+
+}
+
+slider.addEventListener("input", updateYear);
+
+updateYear();
+
+
+/* =====================================================
+   RECENT PERSONEN
+===================================================== */
+
+let recentPeople = [];
+
+
+/* =====================================================
+   RECENT FUTURES
+===================================================== */
+
+const recentFutures = {};
+
+
+/* =====================================================
+   PERSON AUSWÄHLEN
+===================================================== */
+
+function getRandomPerson() {
+
+    let available = people.filter(
+        person => !recentPeople.includes(person)
+    );
+
+    if (available.length === 0) {
+        available = [...people];
+    }
+
+    const person =
+        available[Math.floor(Math.random() * available.length)];
+
+    recentPeople.push(person);
+
+    if (recentPeople.length > 3) {
+        recentPeople.shift();
+    }
+
+    return person;
+}
+
+
+/* =====================================================
+   PASSENDE ALTERSPHASE
+===================================================== */
+
+function getCategory(age) {
+
+    if (age <= 18) {
+        return "young";
+    }
+
+    if (age <= 35) {
+        return "adult";
+    }
+
+    return "future";
+}
+
+
+/* =====================================================
+   ZUKUNFT HOLEN
+===================================================== */
+
+function getFuture(person, age) {
+
+    const category = getCategory(age);
+
+    const list = futures[person][category];
+
+    if (!recentFutures[person]) {
+        recentFutures[person] = [];
+    }
+
+    let available = list.filter(
+        future => !recentFutures[person].includes(future)
+    );
+
+    if (available.length === 0) {
+        recentFutures[person] = [];
+        available = [...list];
+    }
+
+    const future =
+        available[Math.floor(Math.random() * available.length)];
+
+    recentFutures[person].push(future);
+
+    if (recentFutures[person].length > 5) {
+        recentFutures[person].shift();
+    }
+
+    return future;
+}
+
+
+/* =====================================================
+   LEVEL
+===================================================== */
+
+function getLevel(age) {
+
+    if (age <= 18) {
+
+        return Math.random() > .5
+            ? "NORMAL"
+            : "INTERESSANT";
+
+    }
+
+    if (age <= 35) {
+
+        return Math.random() > .5
+            ? "INTERESSANT"
+            : "SELTEN";
+
+    }
+
+    return Math.random() > .5
+        ? "SELTEN"
+        : "LEGENDÄR";
+}
+
+
+/* =====================================================
+   FUTURE ID
+===================================================== */
+
+function generateFutureId() {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let id = "FP-";
+
+    for (let i = 0; i < 4; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    id += "-";
+
+    for (let i = 0; i < 4; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    return "#" + id;
+}
+
+
+/* =====================================================
+   TIMELINE
+===================================================== */
+
+function createTimeline(year) {
+
+    const timeline =
+        document.getElementById("timeline");
+
+    timeline.innerHTML = "";
+
+    let points;
+
+    if (year <= 2030) {
+
+        points = [
+            [2026, "Heute"],
+            [2027, "Erste Schritte"],
+            [year, "Zieljahr"],
+            [year + 2, "Neue Pläne"]
+        ];
+
+    } else if (year <= 2040) {
+
+        points = [
+            [2026, "Heute"],
+            [2030, "Ausbildung / Studium"],
+            [2035, "Berufseinstieg"],
+            [year, "Zieljahr"]
+        ];
+
+    } else if (year <= 2070) {
+
+        points = [
+            [2026, "Start"],
+            [2035, "Erste Karriere"],
+            [2048, "Große Projekte"],
+            [year, "Zieljahr"]
+        ];
+
+    } else {
+
+        points = [
+            [2026, "Heute"],
+            [2040, "Karriere"],
+            [2060, "Erfahrung"],
+            [year, "Zieljahr"]
+        ];
+
+    }
+
+    points.forEach(point => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "timeline-item";
+
+        item.innerHTML = `
+            <div class="timeline-year">
+                ${point[0]}
+            </div>
+
+            <div class="timeline-desc">
+                ${point[1]}
+            </div>
+        `;
+
+        timeline.appendChild(item);
+
+    });
+
+}
+
+
+/* =====================================================
+   SCAN
+===================================================== */
+
+const scanMessages = [
+    "ANALYZING PERSON...",
+    "SCANNING TIMELINE...",
+    "CALCULATING AGE...",
+    "ACCESSING FUTURE...",
+    "SIMULATION READY..."
+];
+
+
+/* =====================================================
+   PREDICT
+===================================================== */
+
+function predict() {
+
+    const year =
+        Number(slider.value);
+
+    const age =
+        15 + (year - 2026);
+
+    const result =
+        document.getElementById("result");
+
+    const scan =
+        document.getElementById("scan");
+
+    const content =
+        document.getElementById("resultContent");
+
+    const scanText =
+        document.getElementById("scanText");
+
+    result.classList.add("show");
+
+    content.style.display = "none";
+
+    scan.classList.add("active");
+
+    let index = 0;
+
+    scanText.textContent =
+        scanMessages[0];
+
+    const interval =
+        setInterval(() => {
+
+            index++;
+
+            if (index < scanMessages.length) {
+                scanText.textContent =
+                    scanMessages[index];
+            }
+
+        }, 300);
+
+
+    setTimeout(() => {
+
+        clearInterval(interval);
+
+        scan.classList.remove("active");
+
+        content.style.display = "block";
+
+
+        const person =
+            getRandomPerson();
+
+        const future =
+            getFuture(person, age);
+
+        const level =
+            getLevel(age);
+
+
+        document.getElementById("resultName")
+            .textContent = person;
+
+        document.getElementById("resultText")
+            .textContent = future;
+
+        document.getElementById("yearMeta")
+            .textContent = year;
+
+        document.getElementById("ageMeta")
+            .textContent = `Alter ${age}`;
+
+        document.getElementById("levelMeta")
+            .textContent = `LEVEL: ${level}`;
+
+        document.getElementById("futureId")
+            .textContent = generateFutureId();
+
+
+        createTimeline(year);
+
+
+        result.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }, 1700);
+
+}
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+document.addEventListener("keydown", event => {
+
+    const active =
+        document.activeElement.tagName.toLowerCase();
+
+    if (
+        (event.key === "Enter" || event.key.toLowerCase() === "r")
+        && active !== "input"
+    ) {
+        predict();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
