@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Unsere Crew</title>
+
+<style>
+
+/* ================================================= */
+/* RESET */
+/* ================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(91,91,247,.18),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 90%,
+            rgba(168,85,247,.16),
+            transparent 30%
+        ),
+        #070711;
+
+    overflow-x: hidden;
+}
+
+
+/* ================================================= */
+/* HINTERGRUND */
+/* ================================================= */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    width: 500px;
+    height: 500px;
+
+    left: -220px;
+    top: -250px;
+
+    background: #5b5bf7;
+
+    filter: blur(180px);
+
+    opacity: .2;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    width: 500px;
+    height: 500px;
+
+    right: -220px;
+    bottom: -250px;
+
+    background: #a855f7;
+
+    filter: blur(180px);
+
+    opacity: .18;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+/* ================================================= */
+/* HEADER */
+/* ================================================= */
+
+header {
+
+    width: 100%;
+
+    text-align: center;
+
+    padding: 55px 20px 20px;
+}
+
+
+header h1 {
+
+    margin: 0;
+
+    font-size: 64px;
+
+    font-weight: 800;
+
+    letter-spacing: -2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #aaaaff,
+            #ffffff
+        );
+
+    background-size: 200%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        shine 5s linear infinite;
+}
+
+
+header p {
+
+    margin: 12px 0 0;
+
+    color: #888;
+
+    font-size: 16px;
+}
+
+
+@keyframes shine {
+
+    0% {
+        background-position: 0%;
+    }
+
+    100% {
+        background-position: 200%;
+    }
+}
+
+
+/* ================================================= */
+/* SUCHE */
+/* ================================================= */
+
+.search {
+
+    display: block;
+
+    width: 520px;
+
+    height: 52px;
+
+    margin: 10px auto 35px;
+
+    padding: 0 20px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.055);
+
+    backdrop-filter: blur(20px);
+
+    color: white;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: .3s;
+}
+
+
+.search::placeholder {
+    color: #777;
+}
+
+
+.search:focus {
+
+    border-color: #7777ff;
+
+    background:
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        0 0 30px
+        rgba(91,91,247,.15);
+}
+
+
+/* ================================================= */
+/* PC LAYOUT */
+/* ================================================= */
+
+.cards {
+
+    width: 1200px;
+
+    max-width:
+        calc(100% - 60px);
+
+    margin:
+        0 auto 80px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+}
+
+
+/* ================================================= */
+/* KARTE */
+/* ================================================= */
+
+.card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-width: 0;
+
+    border:
+        1px solid
+        rgba(255,255,255,.11);
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.09),
+            rgba(255,255,255,.035)
+        );
+
+    backdrop-filter: blur(18px);
+
+    cursor: pointer;
+
+    transition:
+        transform .4s,
+        border-color .4s,
+        box-shadow .4s;
+
+    animation:
+        appear .7s ease both;
+}
+
+
+.card:nth-child(1) {
+    animation-delay: .05s;
+}
+
+.card:nth-child(2) {
+    animation-delay: .12s;
+}
+
+.card:nth-child(3) {
+    animation-delay: .19s;
+}
+
+.card:nth-child(4) {
+    animation-delay: .26s;
+}
+
+
+@keyframes appear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(25px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* ================================================= */
+/* DESKTOP HOVER */
+/* ================================================= */
+
+@media (hover:hover) and (pointer:fine) {
+
+    .card:hover {
+
+        transform:
+            translateY(-10px)
+            scale(1.015);
+
+        border-color:
+            rgba(140,140,255,.5);
+
+        box-shadow:
+
+            0 25px 70px
+            rgba(0,0,0,.55),
+
+            0 0 35px
+            rgba(91,91,247,.12);
+    }
+
+
+    .card:hover img {
+
+        transform:
+            scale(1.08);
+
+        filter:
+            brightness(1.08)
+            contrast(1.03);
+    }
+
+
+    .card:hover .info p {
+
+        color: #aaaaff;
+    }
+}
+
+
+/* ================================================= */
+/* BILDER */
+/* ================================================= */
+
+.card img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 280px;
+
+    object-fit: cover;
+
+    transition:
+        transform .6s,
+        filter .4s;
+}
+
+
+.card::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 150px;
+    bottom: 0;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(7,7,17,.85)
+        );
+
+    pointer-events: none;
+}
+
+
+/* ================================================= */
+/* INFO */
+/* ================================================= */
+
+.info {
+
+    position: relative;
+
+    z-index: 2;
+
+    padding:
+        19px 21px 21px;
+
+    margin-top: -5px;
+}
+
+
+.info h2 {
+
+    margin: 0;
+
+    font-size: 27px;
+}
+
+
+.info p {
+
+    margin:
+        7px 0 0;
+
+    color: #8d8d9d;
+
+    font-size: 14px;
+
+    transition: .3s;
+}
+
+
+/* ================================================= */
+/* FOOTER */
+/* ================================================= */
+
+footer {
+
+    width: 100%;
+
+    text-align: center;
+
+    padding:
+        15px 10px 25px;
+
+    color: #555;
+
+    font-size: 12px;
+}
+
+
+/* ================================================= */
+/* RGB TEXT */
+/* ================================================= */
+
+.rgb-text {
+
+    display: inline-block;
+
+    margin-left: 8px;
+
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff0000,
+            #ff00ff,
+            #0000ff,
+            #00ffff,
+            #00ff00,
+            #ffff00,
+            #ff0000
+        );
+
+    background-size: 400% 400%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        rgbMove 3s linear infinite;
+}
+
+
+@keyframes rgbMove {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+/* ================================================= */
+/* LAPTOP */
+/* ================================================= */
+
+@media (min-width:901px) and (max-width:1199px) {
+
+    header {
+
+        padding-top: 45px;
+    }
+
+
+    header h1 {
+
+        font-size: 58px;
+    }
+
+
+    .search {
+
+        width: 500px;
+
+        margin-bottom: 30px;
+    }
+
+
+    .cards {
+
+        width: 1000px;
+
+        max-width:
+            calc(100% - 50px);
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 18px;
+    }
+
+
+    .card img {
+
+        height: 280px;
+    }
+}
+
+
+/* ================================================= */
+/* TABLET / IPAD */
+/* ================================================= */
+
+@media (min-width:601px) and (max-width:900px) {
+
+    header {
+
+        padding:
+            45px 20px 20px;
+    }
+
+
+    header h1 {
+
+        font-size: 52px;
+    }
+
+
+    header p {
+
+        font-size: 15px;
+    }
+
+
+    .search {
+
+        width: 80%;
+
+        height: 50px;
+
+        margin-bottom: 30px;
+    }
+
+
+    .cards {
+
+        width: 90%;
+
+        max-width: none;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 60px;
+    }
+
+
+    .card img {
+
+        height: 300px;
+    }
+
+
+    .info h2 {
+
+        font-size: 24px;
+    }
+
+
+    footer {
+
+        padding-bottom: 25px;
+    }
+}
+
+
+/* ================================================= */
+/* HANDY */
+/* ================================================= */
+
+@media only screen and (max-width:600px) {
+
+    html {
+
+        width: 100%;
+
+        min-width: 320px;
+    }
+
+
+    body {
+
+        width: 100%;
+
+        min-width: 320px;
+
+        overflow-x: hidden;
+    }
+
+
+    header {
+
+        width: 100%;
+
+        padding:
+            30px 15px 15px;
+    }
+
+
+    header h1 {
+
+        font-size: 38px;
+
+        line-height: 1.1;
+
+        letter-spacing: -1px;
+    }
+
+
+    header p {
+
+        font-size: 13px;
+
+        margin-top: 8px;
+    }
+
+
+    /* ============================================= */
+    /* HANDY SUCHFELD */
+    /* ============================================= */
+
+    .search {
+
+        display: block;
+
+        width:
+            calc(100% - 32px);
+
+        height: 50px;
+
+        margin:
+            10px 16px 25px;
+
+        padding:
+            0 16px;
+
+        font-size: 16px;
+    }
+
+
+    /* ============================================= */
+    /* HANDY CREW GRID */
+    /* ============================================= */
+
+    .cards {
+
+        display: flex;
+
+        flex-direction: column;
+
+        width:
+            calc(100% - 32px);
+
+        max-width: none;
+
+        margin:
+            0 16px 35px;
+
+        gap: 16px;
+    }
+
+
+    /* ============================================= */
+    /* HANDY KARTE */
+    /* ============================================= */
+
+    .card {
+
+        display: block;
+
+        width: 100%;
+
+        min-width: 0;
+
+        flex:
+            0 0 auto;
+
+        border-radius: 20px;
+    }
+
+
+    /* ============================================= */
+    /* HANDY BILDER */
+    /* ============================================= */
+
+    .card img {
+
+        display: block;
+
+        width: 100%;
+
+        height: 300px;
+
+        object-fit: cover;
+    }
+
+
+    /* ============================================= */
+    /* HANDY INFO */
+    /* ============================================= */
+
+    .info {
+
+        padding:
+            16px 17px 18px;
+    }
+
+
+    .info h2 {
+
+        font-size: 24px;
+
+        margin: 0;
+    }
+
+
+    .info p {
+
+        font-size: 13px;
+
+        margin-top: 6px;
+    }
+
+
+    /* ============================================= */
+    /* HANDY FOOTER */
+    /* ============================================= */
+
+    footer {
+
+        width: 100%;
+
+        padding:
+            12px 10px 25px;
+
+        font-size: 10px;
+    }
+}
+
+
+/* ================================================= */
+/* SEHR KLEINES HANDY */
+/* ================================================= */
+
+@media only screen and (max-width:380px) {
+
+    header h1 {
+
+        font-size: 34px;
+    }
+
+
+    header p {
+
+        font-size: 12px;
+    }
+
+
+    .cards {
+
+        width:
+            calc(100% - 24px);
+
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+
+    .card img {
+
+        height: 270px;
+    }
+
+
+    .info h2 {
+
+        font-size: 21px;
+    }
+}
+
+
+/* ================================================= */
+/* HANDY QUERFORMAT */
+/* ================================================= */
+
+@media only screen
+    and (max-width:900px)
+    and (orientation:landscape) {
+
+    header {
+
+        padding:
+            22px 15px 10px;
+    }
+
+
+    header h1 {
+
+        font-size: 40px;
+    }
+
+
+    header p {
+
+        margin-top: 5px;
+    }
+
+
+    .search {
+
+        width:
+            calc(100% - 32px);
+
+        margin:
+            5px 16px 15px;
+    }
+
+
+    .cards {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0,1fr));
+
+        width:
+            calc(100% - 32px);
+
+        margin:
+            0 16px 35px;
+
+        gap: 14px;
+    }
+
+
+    .card img {
+
+        height: 230px;
+    }
+}
+
+
+/* ================================================= */
+/* POPUP */
+/* ================================================= */
+
+.popup {
+
+    position: fixed;
+
+    right: 24px;
+
+    bottom: 24px;
+
+    width: 360px;
+
+    max-width:
+        calc(100% - 32px);
+
+    padding:
+        22px 48px 22px 22px;
+
+    border:
+        1px solid
+        rgba(150,150,255,.25);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,30,55,.97),
+            rgba(12,12,25,.97)
+        );
+
+    backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+
+        0 20px 60px
+        rgba(0,0,0,.55),
+
+        0 0 30px
+        rgba(91,91,247,.12);
+
+    z-index: 9999;
+
+    transform:
+        translateX(130%);
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* ================================================= */
+/* POPUP SHOW */
+/* ================================================= */
+
+.popup.show {
+
+    animation:
+        popupIn .65s
+        cubic-bezier(.2,.8,.2,1)
+        forwards;
+
+    pointer-events: auto;
+}
+
+
+/* ================================================= */
+/* POPUP HIDE */
+/* ================================================= */
+
+.popup.hide {
+
+    animation:
+        popupOut .45s
+        cubic-bezier(.7,0,.8,.2)
+        forwards;
+
+    pointer-events: none;
+}
+
+
+@keyframes popupIn {
+
+    from {
+
+        transform:
+            translateX(130%);
+
+        opacity: 0;
+    }
+
+    to {
+
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes popupOut {
+
+    from {
+
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+
+    to {
+
+        transform:
+            translateX(130%);
+
+        opacity: 0;
+    }
+}
+
+
+/* ================================================= */
+/* POPUP ZAHL */
+/* ================================================= */
+
+.popup-number {
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            90deg,
+            #aaaaff,
+            #ffffff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color:
+        transparent;
+}
+
+
+/* ================================================= */
+/* POPUP TEXT */
+/* ================================================= */
+
+.popup-text {
+
+    margin-top: 4px;
+
+    color: #ddd;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+}
+
+
+/* ================================================= */
+/* POPUP X */
+/* ================================================= */
+
+.popup-close {
+
+    position: absolute;
+
+    top: 8px;
+
+    right: 8px;
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color: #aaa;
+
+    font-size: 23px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s,
+        color .2s,
+        transform .2s;
+}
+
+
+.popup-close:hover {
+
+    background:
+        rgba(255,255,255,.14);
+
+    color: white;
+
+    transform:
+        rotate(90deg);
+}
+
+
+/* ================================================= */
+/* POPUP TABLET */
+/* ================================================= */
+
+@media (min-width:601px) and (max-width:900px) {
+
+    .popup {
+
+        right: 20px;
+
+        bottom: 20px;
+
+        width: 340px;
+    }
+}
+
+
+/* ================================================= */
+/* POPUP HANDY */
+/* ================================================= */
+
+@media only screen and (max-width:600px) {
+
+    .popup {
+
+        left: 16px;
+
+        right: 16px;
+
+        bottom: 16px;
+
+        width: auto;
+
+        max-width: none;
+
+        padding:
+            20px 50px 20px 20px;
+    }
+
+
+    .popup-number {
+
+        font-size: 30px;
+    }
+
+
+    .popup-text {
+
+        font-size: 15px;
+    }
+
+
+    .popup-close {
+
+        width: 42px;
+
+        height: 42px;
+
+        top: 7px;
+
+        right: 7px;
+    }
+}
+
+
+/* ================================================= */
+/* TOUCH */
+/* ================================================= */
+
+@media (hover:none) {
+
+    .popup-close {
+
+        min-width: 42px;
+
+        min-height: 42px;
+    }
+}
+
+
+/* ================================================= */
+/* REDUCED MOTION */
+/* ================================================= */
+
+@media (prefers-reduced-motion:reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            .01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            .01ms !important;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
+
+<header>
+
+    <h1>
+        Unsere Crew
+    </h1>
+
+    <p>
+        Willkommen auf unserer Website 👋
+    </p>
+
+</header>
+
+
+<!-- ================================================= -->
+<!-- SUCHE -->
+<!-- ================================================= -->
+
+<input
+    class="search"
+    id="search"
+    type="text"
+    placeholder="🔍 Person suchen..."
+    autocomplete="off"
+>
+
+
+<!-- ================================================= -->
+<!-- CREW KARTEN -->
+<!-- ================================================= -->
+
+<div class="cards">
+
+
+    <!-- ALP -->
+
+    <div
+        class="card"
+        data-name="alp"
+        onclick="location.href='alp.html'"
+    >
+
+        <img
+            src="alp.png"
+            alt="Alp"
+        >
+
+        <div class="info">
+
+            <h2>
+                Alp
+            </h2>
+
+            <p>
+                Profil ansehen →
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- DEVIN -->
+
+    <div
+        class="card"
+        data-name="devin"
+        onclick="location.href='devin.html'"
+    >
+
+        <img
+            src="devin.png"
+            alt="Devin"
+        >
+
+        <div class="info">
+
+            <h2>
+                Devin
+            </h2>
+
+            <p>
+                Profil ansehen →
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- BILAL -->
+
+    <div
+        class="card"
+        data-name="bilal"
+        onclick="location.href='bilal.html'"
+    >
+
+        <img
+            src="bilal.png"
+            alt="Bilal"
+        >
+
+        <div class="info">
+
+            <h2>
+                Bilal
+            </h2>
+
+            <p>
+                Profil ansehen →
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ABI -->
+
+    <div
+        class="card"
+        data-name="abi"
+        onclick="location.href='abi.html'"
+    >
+
+        <img
+            src="abi.png"
+            alt="Abi"
+        >
+
+        <div class="info">
+
+            <h2>
+                Abi
+            </h2>
+
+            <p>
+                Profil ansehen →
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- FOOTER -->
+<!-- ================================================= -->
+
+<footer>
+
+    Unsere Crew © 2026
+
+    <span class="rgb-text">
+        ft. daniel
+    </span>
+
+</footer>
+
+
+<!-- ================================================= -->
+<!-- POPUP -->
+<!-- ================================================= -->
+
+<div
+    class="popup"
+    id="crewPopup"
+    role="status"
+    aria-live="polite"
+>
+
+    <button
+        class="popup-close"
+        id="popupClose"
+        type="button"
+        aria-label="Popup schließen"
+    >
+        ×
+    </button>
+
+
+    <div
+        class="popup-number"
+        id="popupNumber"
+    >
+        1
+    </div>
+
+
+    <div
+        class="popup-text"
+        id="popupText"
+    >
+        Crew-Meldung 👀
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script>
+
+
+/* ================================================= */
+/* SUCHE */
+/* ================================================= */
+
+const search =
+    document.getElementById("search");
+
+
+const cards =
+    document.querySelectorAll(".card");
+
+
+search.addEventListener(
+    "input",
+    () => {
+
+        const value =
+            search.value
+            .toLowerCase()
+            .trim();
+
+
+        cards.forEach(
+            card => {
+
+                const name =
+                    card.dataset.name;
+
+
+                if (
+                    name.includes(value)
+                ) {
+
+                    card.style.display =
+                        "";
+
+                } else {
+
+                    card.style.display =
+                        "none";
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* ================================================= */
+/* POPUP ELEMENTE */
+/* ================================================= */
+
+const popup =
+    document.getElementById(
+        "crewPopup"
+    );
+
+
+const popupClose =
+    document.getElementById(
+        "popupClose"
+    );
+
+
+const popupNumber =
+    document.getElementById(
+        "popupNumber"
+    );
+
+
+const popupText =
+    document.getElementById(
+        "popupText"
+    );
+
+
+/* ================================================= */
+/* CREW NAMEN */
+/* ================================================= */
+
+const crewNames = [
+
+    "Alp",
+    "Devin",
+    "Bilal",
+    "Abi"
+
+];
+
+
+/* ================================================= */
+/* ZUFALLSZAHL 1–15 */
+/* ================================================= */
+
+function randomNumber() {
+
+    return Math.floor(
+        Math.random() * 15
+    ) + 1;
+}
+
+
+/* ================================================= */
+/* ZUFÄLLIGER NAME */
+/* ================================================= */
+
+function randomCrew() {
+
+    const index =
+        Math.floor(
+            Math.random()
+            * crewNames.length
+        );
+
+    return crewNames[index];
+}
+
+
+/* ================================================= */
+/* POPUP ANZEIGEN */
+/* ================================================= */
+
+function showPopup() {
+
+    const number =
+        randomNumber();
+
+
+    const name =
+        randomCrew();
+
+
+    popupNumber.textContent =
+        number;
+
+
+    popupText.textContent =
+        `${number} heiße ${name}s sind in deiner Nähe 👀`;
+
+
+    popup.classList.remove(
+        "show",
+        "hide"
+    );
+
+
+    void popup.offsetWidth;
+
+
+    popup.classList.add(
+        "show"
+    );
+}
+
+
+/* ================================================= */
+/* POPUP SCHLIESSEN */
+/* ================================================= */
+
+function closePopup() {
+
+    popup.classList.remove(
+        "show"
+    );
+
+
+    popup.classList.add(
+        "hide"
+    );
+}
+
+
+popupClose.addEventListener(
+    "click",
+    closePopup
+);
+
+
+/* ================================================= */
+/* ERSTES POPUP */
+/* ================================================= */
+
+const firstDelay =
+    Math.floor(
+        Math.random() * 7000
+    ) + 3000;
+
+
+setTimeout(
+    showPopup,
+    firstDelay
+);
+
+
+/* ================================================= */
+/* DANACH ALLE 40 SEKUNDEN */
+/* ================================================= */
+
+setInterval(
+    showPopup,
+    40000
+);
+
+</script>
+
+
+</body>
+
+</html>
